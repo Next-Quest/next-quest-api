@@ -1,0 +1,9 @@
+### Cadastro de novo usuário
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "lucas@email.com",
+  "username": "lucas_dev",
+  "password": "Senha123!"
+}

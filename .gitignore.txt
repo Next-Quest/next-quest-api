@@ -1,0 +1,19 @@
+# Diretórios padrão do Visual Studio
+.vs/
+bin/
+obj/
+
+# Arquivos de usuário/sessão temporários
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Arquivos de banco/temporários
+*.db
+*.log
+*.sqlite
+
+# Arquivos de backup do Visual Studio
+*.bak
+*.tmp
