@@ -9,5 +9,6 @@ namespace NextQuest.Data
 			: base(options) { }
 
 		public DbSet<User> Users => Set<User>();
+		public DbSet<Review> Reviews => Set<Review>();
 	}
 }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NextQuest")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eae60554c5a4b9f4c7e454de4824faac5d7cd8d2")]
 [assembly: System.Reflection.AssemblyProductAttribute("NextQuest")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NextQuest")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

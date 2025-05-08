@@ -63,5 +63,23 @@ namespace NextQuest.Controllers
 
             return Ok("Usuário criado com sucesso.");
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(UserDto request)
+        {
+            // Verificar se o usuário existe
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == request.Email);
+
+            if (user == null)
+                return BadRequest("Usuário ou senha inválidos.");
+
+            // Validar a senha
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+                return BadRequest("Usuário ou senha inválidos.");
+
+            return Ok("Login bem-sucedido.");
+        }
+
     }
 }

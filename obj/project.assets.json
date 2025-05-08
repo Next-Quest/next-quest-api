@@ -5232,11 +5232,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Pichau\\NextQuest\\NextQuest.csproj",
+      "projectUniqueName": "C:\\Users\\Pichau\\next-quest-api\\NextQuest.csproj",
       "projectName": "NextQuest",
-      "projectPath": "C:\\Users\\Pichau\\NextQuest\\NextQuest.csproj",
+      "projectPath": "C:\\Users\\Pichau\\next-quest-api\\NextQuest.csproj",
       "packagesPath": "C:\\Users\\Pichau\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Pichau\\NextQuest\\obj\\",
+      "outputPath": "C:\\Users\\Pichau\\next-quest-api\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Pichau\\AppData\\Roaming\\NuGet\\NuGet.Config",
