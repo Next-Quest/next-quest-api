@@ -2,6 +2,7 @@
 .vs/
 bin/
 obj/
+.idea/
 
 # Arquivos de usuário/sessão temporários
 *.user
