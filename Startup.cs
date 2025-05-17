@@ -2,7 +2,9 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
 using NextQuest.Data;
 using NextQuest.Interfaces;
 using NextQuest.Models;
@@ -27,6 +29,11 @@ public class Startup
         services.Configure<MongoDBSettings>(Configuration.GetSection("MongoDB"));
         
         // MongoDB Services
+        services.AddSingleton<IMongoClient>(sp =>
+        {
+            var settings = sp.GetRequiredService<IOptions<MongoDBSettings>>().Value;
+            return new MongoClient(settings.ConnectionURI);
+        });
         services.AddSingleton<PostService>();
         
         // Dependency Injection

@@ -6,5 +6,5 @@ namespace NextQuest.Interfaces;
 public interface IPostInterface
 {
     public Task<(bool Success, string Message)> CreatePostAsync(Post post);
-    public Post MapDtoToModel(PostDto dto);
+    public Post MapPostRequestDtoToPostModel(PostRequestDto dto, int authorId);
 }

@@ -12,10 +12,10 @@ public class PostService : IPostInterface
     private readonly IMongoCollection<Post> _postCollection;
     
     public PostService(
-        IOptions<MongoDBSettings> mongoDBSettings)
+        IOptions<MongoDBSettings> mongoDBSettings,
+        IMongoClient mongoClient)
     {
-        MongoClient client = new MongoClient(mongoDBSettings.Value.ConnectionURI);
-        IMongoDatabase database = client.GetDatabase(mongoDBSettings.Value.DatabaseName);
+        var database = mongoClient.GetDatabase(mongoDBSettings.Value.DatabaseName);
         _postCollection = database.GetCollection<Post>("post");
     }
     
@@ -23,10 +23,7 @@ public class PostService : IPostInterface
     {
         try
         {
-            post.AuthorId = 1;
-            post.Title = "Título";
-            post.Description = "Descrição";
-            
+            post.CreatedAt = DateTime.UtcNow;
             await _postCollection.InsertOneAsync(post);
             
             return (true, "Publicação criada com sucesso.");
@@ -41,14 +38,10 @@ public class PostService : IPostInterface
     {
         return new Post()
         {
-            Id = dto.Id,
-            AuthorId = dto.AuthorId,
+            AuthorId = authorId,
             GameId = dto.GameId,
             Title = dto.Title,
             Description = dto.Description,
-            Likes = dto.Likes,
-            Comments = dto.Comments,
-            CreatedAt = dto.CreatedAt
         };
     }
 }

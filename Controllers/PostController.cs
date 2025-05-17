@@ -19,9 +19,14 @@ namespace NextQuest.Controllers
         
         [Authorize]
         [HttpPost("create")]
-        public async Task<IActionResult> Post([FromBody] PostDto request)
+        public async Task<IActionResult> Post([FromBody] PostRequestDto request)
         {
-            var post = _postInterface.MapDtoToModel(request);
+            var userId = User.FindFirst("id")?.Value;
+            if (!int.TryParse(userId, out var authorId))
+                return Unauthorized();
+            
+            var post = _postInterface.MapPostRequestDtoToPostModel(request, authorId);
+            
             var response = await _postInterface.CreatePostAsync(post);
             
             if (!response.Success)
@@ -30,6 +35,13 @@ namespace NextQuest.Controllers
             }
             
             return Ok(response.Message);
+        }
+
+        [HttpGet("get")]
+        public async Task<IActionResult> Get()
+        {
+            var posts = await _postInterface.GetAsync();
+            return Ok(posts);
         }
     }
 }
