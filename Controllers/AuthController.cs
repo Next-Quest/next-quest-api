@@ -31,10 +31,10 @@ namespace NextQuest.Controllers
 
             if (!response.Success)
             {
-                return BadRequest(response);
+                return BadRequest(response.Message);
             }
             
-            return Ok(response);
+            return Ok(response.Message);
         }
 
         [HttpPost("login")]
@@ -47,7 +47,11 @@ namespace NextQuest.Controllers
                 return BadRequest(response.Message);
             }
             
-            return Ok(response.Message);
+            return Ok(new
+            {
+                message = response.Message,
+                token = response.Token
+            });
         }
 
     }
