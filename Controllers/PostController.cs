@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NextQuest.DTOs;
 using NextQuest.Interfaces;
@@ -16,12 +17,13 @@ namespace NextQuest.Controllers
             _postInterface = postInterface;
         }
         
-        [HttpPost("/")]
+        [Authorize]
+        [HttpPost("create")]
         public async Task<IActionResult> Post([FromBody] PostDto request)
         {
             var post = _postInterface.MapDtoToModel(request);
             var response = await _postInterface.CreatePostAsync(post);
-
+            
             if (!response.Success)
             {
                 return BadRequest(response.Message);

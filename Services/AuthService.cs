@@ -33,6 +33,7 @@ public class AuthService : IAuthInterface
 
         var token = new JwtSecurityToken(
             issuer: _configuration["JWT:Issuer"],
+            audience: _configuration["JWT:Audience"],
             expires: DateTime.UtcNow.AddDays(5),
             claims: claims,
             signingCredentials: credentials

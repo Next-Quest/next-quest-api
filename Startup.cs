@@ -1,4 +1,8 @@
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NextQuest.Data;
 using NextQuest.Interfaces;
 using NextQuest.Models;
@@ -21,7 +25,7 @@ public class Startup
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         services.Configure<MongoDBSettings>(Configuration.GetSection("MongoDB"));
-
+        
         // MongoDB Services
         services.AddSingleton<PostService>();
         
@@ -30,6 +34,21 @@ public class Startup
         services.AddScoped<IAuthInterface, AuthService>();
         services.AddScoped<IPostInterface, PostService>();
 
+        // Authentication
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(o =>
+            {
+                o.RequireHttpsMetadata = false;
+                o.TokenValidationParameters = new TokenValidationParameters
+                {
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])),
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    ValidAudience = Configuration["Jwt:Audience"],
+                    ClockSkew = TimeSpan.Zero,
+                };
+            });
+        services.AddAuthorization();
+        
         // Controllers
         services.AddControllers();
 
@@ -43,6 +62,9 @@ public class Startup
         app.UseSwagger();
         app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "NextQuest.Api v1"); });
 
+        app.UseAuthentication();
+        app.UseAuthorization();
+        
         app.MapControllers();
     }
 }
