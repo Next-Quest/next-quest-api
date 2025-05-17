@@ -36,13 +36,6 @@ namespace NextQuest.Controllers
             
             return Ok(response.Message);
         }
-
-        [HttpGet("get")]
-        public async Task<IActionResult> Get()
-        {
-            var posts = await _postInterface.GetAsync();
-            return Ok(posts);
-        }
     }
 }
 

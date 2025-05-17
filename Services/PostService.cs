@@ -34,7 +34,7 @@ public class PostService : IPostInterface
         }
     }
 
-    public Post MapDtoToModel(PostDto dto)
+    public Post MapPostRequestDtoToPostModel(PostRequestDto dto, int authorId)
     {
         return new Post()
         {
