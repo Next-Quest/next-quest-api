@@ -4,6 +4,8 @@ using NextQuest.DTOs;
 using NextQuest.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using Microsoft.Identity.Client;
+using NextQuest.Interfaces;
 
 namespace NextQuest.Controllers
 {
@@ -12,73 +14,40 @@ namespace NextQuest.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IUserInterface _userInterface;
 
-        public AuthController(AppDbContext context)
+        public AuthController(
+            AppDbContext context,
+            IUserInterface userInterface)
         {
             _context = context;
+            _userInterface = userInterface;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserDto request)
         {
-            // Validar e-mail
-            if (!Regex.IsMatch(request.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
-                return BadRequest("E-mail inválido.");
+            var response = await _userInterface.CreateUserAsync(request);
 
-            if (await _context.Users.AnyAsync(u => u.Email == request.Email))
-                return BadRequest("E-mail já cadastrado.");
-
-            // Validar nome de usuário
-            if (request.Username.Length < 4)
-                return BadRequest("Nome de usuário deve ter pelo menos 4 caracteres.");
-
-            if (!Regex.IsMatch(request.Username, @"^[a-zA-Z0-9_]+$"))
-                return BadRequest("Nome de usuário só pode conter letras, números e _.");
-
-            if (await _context.Users.AnyAsync(u => u.Username == request.Username))
-                return BadRequest("Nome de usuário já está em uso.");
-
-            // Validar senha
-            if (request.Password.Length < 8 ||
-                !Regex.IsMatch(request.Password, @"[a-zA-Z]") ||
-                !Regex.IsMatch(request.Password, @"[0-9]") ||
-                !Regex.IsMatch(request.Password, @"[\W_]"))
+            if (!response.Success)
             {
-                return BadRequest("Senha deve ter pelo menos 8 caracteres, incluindo letra, número e caractere especial.");
+                return BadRequest(response);
             }
-
-            // Criptografar senha
-            string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
-
-            // Criar novo usuário
-            var user = new User
-            {
-                Email = request.Email,
-                Username = request.Username,
-                PasswordHash = passwordHash
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return Ok("Usuário criado com sucesso.");
+            
+            return Ok(response);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserDto request)
         {
-            // Verificar se o usuário existe
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == request.Email);
-
-            if (user == null)
-                return BadRequest("Usuário ou senha inválidos.");
-
-            // Validar a senha
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-                return BadRequest("Usuário ou senha inválidos.");
-
-            return Ok("Login bem-sucedido.");
+            var response = await _userInterface.LoginAsync(request);
+            
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+            
+            return Ok(response.Message);
         }
 
     }
