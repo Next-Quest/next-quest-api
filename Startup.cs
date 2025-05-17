@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NextQuest.Data;
 using NextQuest.Interfaces;
+using NextQuest.Models;
 using NextQuest.Services;
 
 namespace NextQuest;
@@ -19,10 +20,15 @@ public class Startup
         // Database
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+        services.Configure<MongoDBSettings>(Configuration.GetSection("MongoDB"));
 
+        // MongoDB Services
+        services.AddSingleton<PostService>();
+        
         // Dependency Injection
         services.AddScoped<IUserInterface, UserService>();
         services.AddScoped<IAuthInterface, AuthService>();
+        services.AddScoped<IPostInterface, PostService>();
 
         // Controllers
         services.AddControllers();
