@@ -12,11 +12,14 @@ namespace NextQuest.Services;
 public class UserService : IUserInterface
 {
     private readonly AppDbContext _context;
+    private readonly IAuthInterface _auth;
 
     public UserService(
-        AppDbContext context)
+        AppDbContext context,
+        IAuthInterface auth)
     {
         _context = context;
+        _auth = auth;
     }
 
     public async Task<(bool Success, string Message)> CreateUserAsync(UserDto request)
@@ -85,9 +88,8 @@ public class UserService : IUserInterface
         
         if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             return (false, "Usuário ou senha inválidos.", null);
-
-        //TODO: generate JWT
-        var token = "";
+        
+        var token = _auth.GenerateToken(user);
         
         return (true, "Login bem-sucedido.", token);
     }
