@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NextQuest.Data;
 using BCrypt.Net;
+using Swashbuckle.AspNetCore.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +10,18 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 
 builder.Services.AddControllers();
+builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new() { Title = "NextQuest.Api", Version = "v1" });
+    });
 
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI(opt =>
+    {
+        opt.SwaggerEndpoint("/swagger/v1/swagger.json", "NextQuest.Api v1");
+    });
 
 app.MapControllers();
 
