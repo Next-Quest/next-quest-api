@@ -36,6 +36,33 @@ namespace NextQuest.Controllers
             
             return Ok(response.Message);
         }
+        
+        [HttpGet("get")]
+        public async Task<IActionResult> GetPosts()
+        {
+            var response = await _postInterface.GetPostsAsync();
+            
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+            
+            return Ok(response.Message);
+        }
+
+        [Authorize]
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var response = await _postInterface.DeletePostAsync(id);
+            
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+            
+            return Ok(response.Message);
+        }
     }
 }
 

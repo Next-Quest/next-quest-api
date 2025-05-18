@@ -34,6 +34,60 @@ public class PostService : IPostInterface
         }
     }
 
+    public async Task<(bool Success, string Message, List<PostDto> posts)> GetPostsAsync()
+    {
+        try
+        {
+            var response = await _postCollection.FindAsync(post => true);
+            var posts = MapPostModelToPostDtoList(await response.ToListAsync());
+            return (true, "Posts recuperados com sucesso.", posts);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, null);
+        }
+    }
+    
+    public async Task<(bool Success, string Message)> DeletePostAsync(string postId)
+    {
+        try
+        {
+            await _postCollection.DeleteOneAsync(p => p.Id == postId);
+            return (true, "Publicação excluída com sucesso.");
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
+    }
+
+    public PostDto MapPostModelToPostDto(Post post)
+    {
+        return new PostDto
+        {
+            Id = post.Id,
+            AuthorId = post.AuthorId,
+            GameId = post.GameId,
+            Title = post.Title,
+            Description = post.Description,
+            Likes = post.Likes,
+            Comments = post.Comments,
+            CreatedAt = post.CreatedAt
+        };
+    }
+
+    public List<PostDto> MapPostModelToPostDtoList(List<Post> posts)
+    {
+        var postDtoList = new List<PostDto>();
+
+        foreach (var post in posts)
+        {
+            postDtoList.Add(MapPostModelToPostDto(post));
+        }
+        
+        return postDtoList;
+    }
+    
     public Post MapPostRequestDtoToPostModel(PostRequestDto dto, int authorId)
     {
         return new Post()
