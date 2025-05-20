@@ -13,14 +13,11 @@ namespace NextQuest.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly AppDbContext _context;
         private readonly IUserInterface _userInterface;
 
         public AuthController(
-            AppDbContext context,
             IUserInterface userInterface)
         {
-            _context = context;
             _userInterface = userInterface;
         }
 

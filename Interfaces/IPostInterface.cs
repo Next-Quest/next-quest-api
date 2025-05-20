@@ -1,0 +1,13 @@
+using NextQuest.DTOs;
+using NextQuest.Models;
+
+namespace NextQuest.Interfaces;
+
+public interface IPostInterface
+{
+    public Task<(bool Success, string Message)> CreatePostAsync(Post post);
+    public Task<(bool Success, string Message, List<PostDto> posts)> GetPostsAsync();
+    public Task<(bool Success, string Message)> DeletePostAsync(string postId);
+    public PostDto MapPostModelToPostDto(Post post);
+    public Post MapPostRequestDtoToPostModel(PostRequestDto dto, int authorId);
+}

@@ -22,10 +22,10 @@ public class AuthService : IAuthInterface
     {
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User")
+            new Claim("id", user.Id.ToString()),
+            new Claim("username", user.Username),
+            new Claim("email", user.Email),
+            new Claim("role", user.IsAdmin ? "Admin" : "User")
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
@@ -33,6 +33,7 @@ public class AuthService : IAuthInterface
 
         var token = new JwtSecurityToken(
             issuer: _configuration["JWT:Issuer"],
+            audience: _configuration["JWT:Audience"],
             expires: DateTime.UtcNow.AddDays(5),
             claims: claims,
             signingCredentials: credentials
