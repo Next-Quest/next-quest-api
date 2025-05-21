@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using NextQuest.Data;
 using NextQuest.DTOs.CompanyDtos;
 using NextQuest.Interfaces;
@@ -29,6 +30,29 @@ public class CompanyService : ICompanyInterface
         }
     }
 
+    public async Task<(bool Success, string Message, List<CompanyDto>? Companies)> GetAllCompaniesAsync()
+    {
+        try
+        {
+            var response = await _context.Companies.ToListAsync();
+
+            if (response.Count == 0)
+            {
+                return (true, "Nenhuma empresa encontrada.", null);
+            }
+
+            var companies = MapCompanyModelToCompanyDtoList(response);
+            
+            return (true, "Empresas encontradas com sucesso.", companies);
+        }
+        catch (Exception e)
+        {
+            return(false, e.Message, null);
+        }
+    }
+    
+    
+    #region DtoMapping
     public Company MapCreateCompanyDtoToCompanyModel(CreateCompanyDto company)
     {
         return new Company()
@@ -36,4 +60,26 @@ public class CompanyService : ICompanyInterface
             Name = company.Name
         };
     }
+
+    private CompanyDto MapCompanyModelToCompanyDto(Company company)
+    {
+        return new CompanyDto()
+        {
+            Id = company.Id,
+            Name = company.Name
+        };
+    }
+    
+    private List<CompanyDto> MapCompanyModelToCompanyDtoList(List<Company> companies)
+    {
+        var companyDtoList = new List<CompanyDto>();
+
+        foreach (var company in companies)
+        {
+            companyDtoList.Add(MapCompanyModelToCompanyDto(company));
+        }
+        
+        return companyDtoList;
+    }
+    #endregion
 }

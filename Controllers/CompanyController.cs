@@ -47,5 +47,21 @@ public class CompanyController : ControllerBase
             
         return Ok(response.Message);
     }
-    
+
+    [HttpGet("listAll")]
+    public async Task<IActionResult> List()
+    {
+        var response = await _companyInterface.GetAllCompaniesAsync();
+        
+        if (!response.Success)
+        {
+            return BadRequest(response.Message);
+        }
+            
+        return Ok(new
+        {
+            Message = response.Message,
+            Companies = response.Companies
+        });
+    }
 }
