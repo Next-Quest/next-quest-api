@@ -26,7 +26,7 @@ public class PostService : IPostInterface
             post.CreatedAt = DateTime.UtcNow;
             await _postCollection.InsertOneAsync(post);
             
-            return (true, "Publicação criada com sucesso.");
+            return (true, "Post criado com sucesso.");
         }
         catch (Exception e)
         {
@@ -55,13 +55,28 @@ public class PostService : IPostInterface
             return (false, e.Message, null);
         }
     }
+
+    public async Task<(bool Success, string Message, PostDto? post)> GetPostByIdAsync(string id)
+    {
+        try
+        {
+            var response = await _postCollection.Find(post => post.Id == id).FirstOrDefaultAsync();
+            
+            var post = MapPostModelToPostDto(response);
+            return (true, "Post recuperado com sucesso.", post);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, null);
+        }
+    }
     
     public async Task<(bool Success, string Message)> DeletePostAsync(string postId)
     {
         try
         {
             await _postCollection.DeleteOneAsync(p => p.Id == postId);
-            return (true, "Publicação excluída com sucesso.");
+            return (true, "Post excluído com sucesso.");
         }
         catch (Exception e)
         {

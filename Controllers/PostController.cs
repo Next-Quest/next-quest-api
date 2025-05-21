@@ -50,6 +50,19 @@ namespace NextQuest.Controllers
             return Ok(response.posts);
         }
 
+        [HttpGet("get/{id}")]
+        public async Task<IActionResult> GetPostByID(string id)
+        {
+            var response = await _postInterface.GetPostByIdAsync(id);
+
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+            
+            return Ok(response.post);
+        }
+
         [Authorize]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(string id)
