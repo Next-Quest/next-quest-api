@@ -38,9 +38,43 @@ namespace NextQuest.Controllers
         }
         
         [HttpGet("get")]
-        public async Task<IActionResult> GetPosts()
+        public async Task<IActionResult> GetPosts([FromQuery] int page, [FromQuery] int pageSize)
         {
-            var response = await _postInterface.GetPostsAsync();
+            var response = await _postInterface.GetPostsAsync(page, pageSize);
+            
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+            
+            return Ok(response.posts);
+        }
+
+        [HttpGet("get/{id}")]
+        public async Task<IActionResult> GetPostById(string id)
+        {
+            var response = await _postInterface.GetPostByIdAsync(id);
+
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+            
+            return Ok(response.post);
+        }
+
+        [Authorize]
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdatePost([FromBody] PostRequestDto request, string id)
+        {
+            var userId = User.FindFirst("id")?.Value;
+            if (!int.TryParse(userId, out var authorId))
+                return Unauthorized();
+
+            request.Id = id;
+            var post = _postInterface.MapPostRequestDtoToPostModel(request, authorId);
+            
+            var response = await _postInterface.UpdatePostAsync(post);
             
             if (!response.Success)
             {
@@ -54,7 +88,11 @@ namespace NextQuest.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var response = await _postInterface.DeletePostAsync(id);
+            var userId = User.FindFirst("id")?.Value;
+            if (!int.TryParse(userId, out var authorId))
+                return Unauthorized();
+            
+            var response = await _postInterface.DeletePostAsync(id, authorId);
             
             if (!response.Success)
             {

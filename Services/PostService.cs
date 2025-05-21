@@ -26,7 +26,7 @@ public class PostService : IPostInterface
             post.CreatedAt = DateTime.UtcNow;
             await _postCollection.InsertOneAsync(post);
             
-            return (true, "Publicação criada com sucesso.");
+            return (true, "Post criado com sucesso.");
         }
         catch (Exception e)
         {
@@ -34,12 +34,20 @@ public class PostService : IPostInterface
         }
     }
 
-    public async Task<(bool Success, string Message, List<PostDto> posts)> GetPostsAsync()
+    public async Task<(bool Success, string Message, List<PostDto>? posts)> GetPostsAsync(int page, int pageSize)
     {
         try
         {
-            var response = await _postCollection.FindAsync(post => true);
-            var posts = MapPostModelToPostDtoList(await response.ToListAsync());
+            var skip = (page - 1) * pageSize;
+            
+            var response = await _postCollection
+                .Find(post => true)
+                .SortByDescending(post => post.CreatedAt)
+                .Skip(skip)
+                .Limit(pageSize)
+                .ToListAsync();
+            
+            var posts = MapPostModelToPostDtoList(response);
             return (true, "Posts recuperados com sucesso.", posts);
         }
         catch (Exception e)
@@ -47,13 +55,53 @@ public class PostService : IPostInterface
             return (false, e.Message, null);
         }
     }
-    
-    public async Task<(bool Success, string Message)> DeletePostAsync(string postId)
+
+    public async Task<(bool Success, string Message, PostDto? post)> GetPostByIdAsync(string id)
     {
         try
         {
-            await _postCollection.DeleteOneAsync(p => p.Id == postId);
-            return (true, "Publicação excluída com sucesso.");
+            var response = await _postCollection.Find(post => post.Id == id).FirstOrDefaultAsync();
+            
+            var post = MapPostModelToPostDto(response);
+            return (true, "Post recuperado com sucesso.", post);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, null);
+        }
+    }
+
+    public async Task<(bool Success, string Message)> UpdatePostAsync(Post updatedPost)
+    {
+        try
+        {
+            var result = await _postCollection.ReplaceOneAsync(post => post.Id == updatedPost.Id && post.AuthorId == updatedPost.AuthorId, updatedPost);
+
+            if (result.MatchedCount == 0)
+            {
+                return (false, "Post não encontrado ou você não tem permissão para excluí-lo.");
+            }
+            
+            return (true, "Post editado com sucesso.");
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
+    }
+    
+    public async Task<(bool Success, string Message)> DeletePostAsync(string postId, int authorId)
+    {
+        try
+        {
+            var result = await _postCollection.DeleteOneAsync(p => p.Id == postId && p.AuthorId == authorId);
+            
+            if (result.DeletedCount == 0)
+            {
+                return (false, "Post não encontrado ou você não tem permissão para excluí-lo.");
+            }
+            
+            return (true, "Post excluído com sucesso.");
         }
         catch (Exception e)
         {
@@ -76,7 +124,7 @@ public class PostService : IPostInterface
         };
     }
 
-    public List<PostDto> MapPostModelToPostDtoList(List<Post> posts)
+    private List<PostDto> MapPostModelToPostDtoList(List<Post> posts)
     {
         var postDtoList = new List<PostDto>();
 
@@ -92,6 +140,7 @@ public class PostService : IPostInterface
     {
         return new Post()
         {
+            Id = dto.Id,
             AuthorId = authorId,
             GameId = dto.GameId,
             Title = dto.Title,
