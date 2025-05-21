@@ -34,12 +34,20 @@ public class PostService : IPostInterface
         }
     }
 
-    public async Task<(bool Success, string Message, List<PostDto> posts)> GetPostsAsync()
+    public async Task<(bool Success, string Message, List<PostDto>? posts)> GetPostsAsync(int page, int pageSize)
     {
         try
         {
-            var response = await _postCollection.FindAsync(post => true);
-            var posts = MapPostModelToPostDtoList(await response.ToListAsync());
+            var skip = (page - 1) * pageSize;
+            
+            var response = await _postCollection
+                .Find(post => true)
+                .SortByDescending(post => post.CreatedAt)
+                .Skip(skip)
+                .Limit(pageSize)
+                .ToListAsync();
+            
+            var posts = MapPostModelToPostDtoList(response);
             return (true, "Posts recuperados com sucesso.", posts);
         }
         catch (Exception e)

@@ -38,16 +38,16 @@ namespace NextQuest.Controllers
         }
         
         [HttpGet("get")]
-        public async Task<IActionResult> GetPosts()
+        public async Task<IActionResult> GetPosts([FromQuery] int page, [FromQuery] int pageSize)
         {
-            var response = await _postInterface.GetPostsAsync();
+            var response = await _postInterface.GetPostsAsync(page, pageSize);
             
             if (!response.Success)
             {
                 return BadRequest(response.Message);
             }
             
-            return Ok(response.Message);
+            return Ok(response.posts);
         }
 
         [Authorize]
