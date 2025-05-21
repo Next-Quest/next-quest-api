@@ -70,6 +70,25 @@ public class PostService : IPostInterface
             return (false, e.Message, null);
         }
     }
+
+    public async Task<(bool Success, string Message)> UpdatePostAsync(Post updatedPost)
+    {
+        try
+        {
+            var result = await _postCollection.ReplaceOneAsync(post => post.Id == updatedPost.Id && post.AuthorId == updatedPost.AuthorId, updatedPost);
+
+            if (result.MatchedCount == 0)
+            {
+                return (false, "Post não encontrado ou você não tem permissão para excluí-lo.");
+            }
+            
+            return (true, "Post editado com sucesso.");
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
+    }
     
     public async Task<(bool Success, string Message)> DeletePostAsync(string postId, int authorId)
     {
@@ -105,7 +124,7 @@ public class PostService : IPostInterface
         };
     }
 
-    public List<PostDto> MapPostModelToPostDtoList(List<Post> posts)
+    private List<PostDto> MapPostModelToPostDtoList(List<Post> posts)
     {
         var postDtoList = new List<PostDto>();
 
@@ -121,6 +140,7 @@ public class PostService : IPostInterface
     {
         return new Post()
         {
+            Id = dto.Id,
             AuthorId = authorId,
             GameId = dto.GameId,
             Title = dto.Title,

@@ -51,7 +51,7 @@ namespace NextQuest.Controllers
         }
 
         [HttpGet("get/{id}")]
-        public async Task<IActionResult> GetPostByID(string id)
+        public async Task<IActionResult> GetPostById(string id)
         {
             var response = await _postInterface.GetPostByIdAsync(id);
 
@@ -61,6 +61,27 @@ namespace NextQuest.Controllers
             }
             
             return Ok(response.post);
+        }
+
+        [Authorize]
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdatePost([FromBody] PostRequestDto request, string id)
+        {
+            var userId = User.FindFirst("id")?.Value;
+            if (!int.TryParse(userId, out var authorId))
+                return Unauthorized();
+
+            request.Id = id;
+            var post = _postInterface.MapPostRequestDtoToPostModel(request, authorId);
+            
+            var response = await _postInterface.UpdatePostAsync(post);
+            
+            if (!response.Success)
+            {
+                return BadRequest(response.Message);
+            }
+            
+            return Ok(response.Message);
         }
 
         [Authorize]
