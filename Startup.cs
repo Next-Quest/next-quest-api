@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using NextQuest.Data;
 using NextQuest.Interfaces;
@@ -25,7 +26,9 @@ public class Startup
     {
         // Database
         services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), 
+            sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()
+            ));
         services.Configure<MongoDBSettings>(Configuration.GetSection("MongoDB"));
         
         // MongoDB Services
@@ -61,7 +64,37 @@ public class Startup
 
         // Swagger
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new() { Title = "NextQuest.Api", Version = "v1" }); });
+        services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "NextQuest.Api", Version = "v1" });
+
+            // Add JWT Authentication
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "Enter 'Bearer' [space] and then your valid token in the text input below.\n\nExample: \"Bearer abc123\""
+            });
+
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+            });
+        });
+
     }
 
     public void Configure(WebApplication app, IWebHostEnvironment env)
