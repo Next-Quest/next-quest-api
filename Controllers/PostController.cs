@@ -67,7 +67,11 @@ namespace NextQuest.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            var response = await _postInterface.DeletePostAsync(id);
+            var userId = User.FindFirst("id")?.Value;
+            if (!int.TryParse(userId, out var authorId))
+                return Unauthorized();
+            
+            var response = await _postInterface.DeletePostAsync(id, authorId);
             
             if (!response.Success)
             {

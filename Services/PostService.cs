@@ -71,11 +71,17 @@ public class PostService : IPostInterface
         }
     }
     
-    public async Task<(bool Success, string Message)> DeletePostAsync(string postId)
+    public async Task<(bool Success, string Message)> DeletePostAsync(string postId, int authorId)
     {
         try
         {
-            await _postCollection.DeleteOneAsync(p => p.Id == postId);
+            var result = await _postCollection.DeleteOneAsync(p => p.Id == postId && p.AuthorId == authorId);
+            
+            if (result.DeletedCount == 0)
+            {
+                return (false, "Post não encontrado ou você não tem permissão para excluí-lo.");
+            }
+            
             return (true, "Post excluído com sucesso.");
         }
         catch (Exception e)
