@@ -43,6 +43,7 @@ public class Startup
         services.AddScoped<IUserInterface, UserService>();
         services.AddScoped<IAuthInterface, AuthService>();
         services.AddScoped<IPostInterface, PostService>();
+        services.AddScoped<ICompanyInterface, CompanyService>();
 
         // Authentication
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

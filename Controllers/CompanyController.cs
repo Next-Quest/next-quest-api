@@ -1,6 +1,51 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using NextQuest.DTOs.CompanyDtos;
+using NextQuest.Interfaces;
+using NextQuest.Models;
+
 namespace NextQuest.Controllers;
 
-public class CompanyController
+[ApiController]
+[Route("api/[controller]")]
+public class CompanyController : ControllerBase
 {
+    private readonly ICompanyInterface _companyInterface;
+    private readonly IUserInterface _userInterface;
+
+    public CompanyController(
+        ICompanyInterface companyInterface,
+        IUserInterface userInterface)
+    {
+        _companyInterface = companyInterface;
+        _userInterface = userInterface;
+    }
+
+    [Authorize]
+    [HttpPost("create")]
+    public async Task<IActionResult> Create([FromBody] CreateCompanyDto request)
+    {
+        var tokenId = User.FindFirst("id")?.Value;
+        if (!int.TryParse(tokenId, out var userId))
+            return Unauthorized();
+
+        var isAdmin = await _userInterface.IsAdminAsync(userId); 
+        
+        if (!isAdmin.Success)
+        {
+            return Unauthorized();
+        }
+
+        var company = _companyInterface.MapCreateCompanyDtoToCompanyModel(request);
+
+        var response  = await _companyInterface.CreateCompanyAsync(company);
+
+        if (!response.Success)
+        {
+            return BadRequest(response.Message);
+        }
+            
+        return Ok(response.Message);
+    }
     
 }
