@@ -7,7 +7,7 @@ using NextQuest.Models;
 
 namespace NextQuest.Services;
 
-public abstract class GameService : IGameInterface
+public class GameService : IGameInterface
 {
     private readonly AppDbContext _context;
 

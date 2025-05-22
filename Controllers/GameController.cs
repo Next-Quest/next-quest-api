@@ -114,7 +114,7 @@ public class GameController : ControllerBase
     }
 
     [Authorize]
-    [HttpPut("delete/{id}")]
+    [HttpDelete("delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
         var tokenId = User.FindFirst("id")?.Value;
