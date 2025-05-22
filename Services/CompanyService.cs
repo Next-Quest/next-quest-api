@@ -98,6 +98,27 @@ public class CompanyService : ICompanyInterface
             return (false, e.Message);
         }
     }
+
+    public async Task<(bool Success, string Message)> DeleteCompanyAsync(int companyId)
+    {
+        try
+        {
+            var existingCompany = await _context.Companies.FindAsync(companyId);
+            if (existingCompany == null)
+            {
+                return (false, "Empresa não encontrada.");
+            }
+
+            _context.Remove(existingCompany);
+            await _context.SaveChangesAsync();
+            
+            return (true, "Empresa excluída com sucesso.");
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
+    }
     
     #region DtoMapping
     public Company MapCreateCompanyDtoToCompanyModel(CreateCompanyDto company)

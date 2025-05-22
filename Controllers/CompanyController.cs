@@ -113,4 +113,29 @@ public class CompanyController : ControllerBase
             
         return Ok(response.Message);
     }
+
+    [Authorize]
+    [HttpDelete("delete/{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var tokenId = User.FindFirst("id")?.Value;
+        if (!int.TryParse(tokenId, out var userId))
+            return Unauthorized();
+
+        var isAdmin = await _userInterface.IsAdminAsync(userId); 
+        
+        if (!isAdmin.Success)
+        {
+            return Unauthorized();
+        }
+        
+        var response = await _companyInterface.DeleteCompanyAsync(id);
+        
+        if (!response.Success)
+        {
+            return BadRequest(response.Message);
+        }
+            
+        return Ok(response.Message);
+    }
 }
