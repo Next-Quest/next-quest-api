@@ -40,10 +40,11 @@ public class Startup
         services.AddSingleton<PostService>();
         
         // Dependency Injection
-        services.AddScoped<IUserInterface, UserService>();
         services.AddScoped<IAuthInterface, AuthService>();
-        services.AddScoped<IPostInterface, PostService>();
         services.AddScoped<ICompanyInterface, CompanyService>();
+        services.AddScoped<IGameInterface, GameService>();
+        services.AddScoped<IPostInterface, PostService>();
+        services.AddScoped<IUserInterface, UserService>();
 
         // Authentication
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
