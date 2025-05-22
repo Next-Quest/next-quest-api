@@ -21,7 +21,7 @@ public class GameController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet("create")]
+    [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] CreateGameDto request)
     {
         var tokenId = User.FindFirst("id")?.Value;
