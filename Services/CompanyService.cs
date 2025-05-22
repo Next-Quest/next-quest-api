@@ -50,7 +50,27 @@ public class CompanyService : ICompanyInterface
             return(false, e.Message, null);
         }
     }
-    
+
+    public async Task<(bool Success, string Message, CompanyDto? Company)> GetCompanyByIdAsync(int companyId)
+    {
+        try
+        {
+            var response = await _context.Companies.FindAsync(companyId);
+
+            if (response == null)
+            {
+                return (true, "Nenhum empresa encontrada.", null);
+            }
+
+            var company = MapCompanyModelToCompanyDto(response);
+
+            return (true, "Empresa encontrada com sucesso.", company);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, null);
+        }
+    }
     
     #region DtoMapping
     public Company MapCreateCompanyDtoToCompanyModel(CreateCompanyDto company)

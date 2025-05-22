@@ -64,4 +64,26 @@ public class CompanyController : ControllerBase
             Companies = response.Companies
         });
     }
+
+    [HttpGet("get/{id}")]
+    public async Task<IActionResult> GetCompanyById(int id)
+    {
+        var response = await _companyInterface.GetCompanyByIdAsync(id);
+
+        if (!response.Success)
+        {
+            return BadRequest(response.Message);
+        }
+
+        if (response.Company is null)
+        {
+            return Ok(response.Message);
+        }
+            
+        return Ok(new
+        {
+            Message = response.Message,
+            Company = response.Company
+        });
+    }
 }
