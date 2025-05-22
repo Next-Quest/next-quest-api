@@ -86,4 +86,31 @@ public class CompanyController : ControllerBase
             Company = response.Company
         });
     }
+
+    [Authorize]
+    [HttpPut("update/{id}")]
+    public async Task<IActionResult> Update([FromBody] UpdateCompanyDto request, int id)
+    {
+        var tokenId = User.FindFirst("id")?.Value;
+        if (!int.TryParse(tokenId, out var userId))
+            return Unauthorized();
+
+        var isAdmin = await _userInterface.IsAdminAsync(userId); 
+        
+        if (!isAdmin.Success)
+        {
+            return Unauthorized();
+        }
+
+        request.Id = id;
+        
+        var response = await _companyInterface.UpdateCompanyAsync(request);
+            
+        if (!response.Success)
+        {
+            return BadRequest(response.Message);
+        }
+            
+        return Ok(response.Message);
+    }
 }

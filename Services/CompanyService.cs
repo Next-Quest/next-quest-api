@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NextQuest.Data;
 using NextQuest.DTOs.CompanyDtos;
 using NextQuest.Interfaces;
@@ -71,6 +72,32 @@ public class CompanyService : ICompanyInterface
             return (false, e.Message, null);
         }
     }
+
+    public async Task<(bool Success, string Message)> UpdateCompanyAsync(UpdateCompanyDto companyDto)
+    {
+        try
+        {
+            var existingCompany = await _context.Companies.FindAsync(companyDto.Id);
+            if (existingCompany == null)
+            {
+                return (false, "Empresa não encontrada.");
+            }
+
+            if (companyDto.Name.IsNullOrEmpty())
+            {
+                return (false, "Nenhuma informação a ser atualizada.");
+            }
+
+            existingCompany.Name = companyDto.Name;
+
+            await _context.SaveChangesAsync();
+            return (true, "Empresa atualizada com sucesso.");
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
+    }
     
     #region DtoMapping
     public Company MapCreateCompanyDtoToCompanyModel(CreateCompanyDto company)
@@ -78,6 +105,15 @@ public class CompanyService : ICompanyInterface
         return new Company()
         {
             Name = company.Name
+        };
+    }
+    
+    public Company MapUpdateCompanyDtoToCompanyModel(UpdateCompanyDto company)
+    {
+        return new Company()
+        {
+            Id = company.Id,
+            Name = company.Name ?? ""
         };
     }
 
