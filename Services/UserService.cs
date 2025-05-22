@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NextQuest.Data;
@@ -92,5 +93,24 @@ public class UserService : IUserInterface
         var token = _auth.GenerateToken(user);
         
         return (true, "Login bem-sucedido.", token);
+    }
+
+    public async Task<(bool Success, string Message)> IsAdminAsync(int userId)
+    {
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return (false, "Não foi possível identificar esse usuário.");
+            }
+            
+            return user.IsAdmin ? (true, "Usuário é administrador.") : (false, "Usuário não possui permissão para realizar essa ação.");
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);  
+        }
     }
 }

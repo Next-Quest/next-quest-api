@@ -6,4 +6,6 @@ public interface IUserInterface
 {
     public Task<(bool Success, string Message)> CreateUserAsync(UserDto request);
     public Task<(bool Success, string Message, string? Token)> LoginAsync(UserDto request);
+    public Task<(bool Success, string Message)> IsAdminAsync(int userId);
+
 }
