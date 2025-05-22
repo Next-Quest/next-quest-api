@@ -2,11 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NextQuest.Data;
 using NextQuest.DTOs.GameDtos;
+using NextQuest.Interfaces;
 using NextQuest.Models;
 
 namespace NextQuest.Services;
 
-public class GameService
+public abstract class GameService : IGameInterface
 {
     private readonly AppDbContext _context;
 
@@ -126,7 +127,7 @@ public class GameService
             var existingGame = await _context.Games.FindAsync(gameId);
             if (existingGame == null)
             {
-                return (false, "Jogo não encontrado.", null);
+                return (false, "Jogo não encontrado.");
             }
             
             _context.Games.Remove(existingGame);
@@ -164,6 +165,17 @@ public class GameService
         }
         
         return gameDtoList;
+    }
+    
+    public Game MapCreateGameDtoToGameModel(CreateGameDto gameDto)
+    {
+        return new Game()
+        {
+            Title = gameDto.Title,
+            PublisherId = gameDto.PublisherId,
+            DeveloperId = gameDto.DeveloperId,
+            ReleaseDate = gameDto.ReleaseDate
+        };
     }
     
     #endregion
