@@ -78,7 +78,7 @@ public class Startup
                 Scheme = "Bearer",
                 BearerFormat = "JWT",
                 In = ParameterLocation.Header,
-                Description = "Enter 'Bearer' [space] and then your valid token in the text input below.\n\nExample: \"Bearer abc123\""
+                Description = "Enter your valid token in the text input below.\n\nExample: \"abc123\""
             });
 
             c.AddSecurityRequirement(new OpenApiSecurityRequirement
