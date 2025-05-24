@@ -1,6 +1,6 @@
-namespace NextQuest.DTOs;
+namespace NextQuest.DTOs.PostDtos;
 
-public class PostRequestDto
+public class CreatePostDto
 {
     public string? Id { get; set; }
     public int AuthorId { get; set; }

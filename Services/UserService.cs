@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NextQuest.Data;
 using NextQuest.DTOs;
+using NextQuest.DTOs.UserDtos;
 using NextQuest.Interfaces;
 using NextQuest.Models;
 
@@ -23,7 +24,7 @@ public class UserService : IUserInterface
         _auth = auth;
     }
 
-    public async Task<(bool Success, string Message)> CreateUserAsync(UserDto request)
+    public async Task<(bool Success, string Message)> CreateUserAsync(CreateUserDto request)
     {
         if (!Regex.IsMatch(request.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             return (false, "E-mail inválido.");
@@ -63,7 +64,7 @@ public class UserService : IUserInterface
         return (true, "Usuário criado com sucesso.");
     }
 
-    public async Task<(bool Success, string Message, string? Token)> LoginAsync(UserDto request)
+    public async Task<(bool Success, string Message, string? Token)> LoginAsync(CreateUserDto request)
     {
         if (!request.Email.IsNullOrEmpty() && !request.Username.IsNullOrEmpty())
         {

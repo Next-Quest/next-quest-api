@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NextQuest.DTOs;
+using NextQuest.DTOs.PostDtos;
 using NextQuest.Interfaces;
 
 namespace NextQuest.Controllers
@@ -19,7 +20,7 @@ namespace NextQuest.Controllers
         
         [Authorize]
         [HttpPost("create")]
-        public async Task<IActionResult> Post([FromBody] PostRequestDto request)
+        public async Task<IActionResult> Post([FromBody] CreatePostDto request)
         {
             var userId = User.FindFirst("id")?.Value;
             if (!int.TryParse(userId, out var authorId))
@@ -65,7 +66,7 @@ namespace NextQuest.Controllers
 
         [Authorize]
         [HttpPut("update/{id}")]
-        public async Task<IActionResult> UpdatePost([FromBody] PostRequestDto request, string id)
+        public async Task<IActionResult> UpdatePost([FromBody] CreatePostDto request, string id)
         {
             var userId = User.FindFirst("id")?.Value;
             if (!int.TryParse(userId, out var authorId))
