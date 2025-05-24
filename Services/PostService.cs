@@ -3,6 +3,7 @@ using NextQuest.Interfaces;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using NextQuest.DTOs.PostDtos;
 using NextQuest.Models;
 
 namespace NextQuest.Services;
@@ -136,7 +137,7 @@ public class PostService : IPostInterface
         return postDtoList;
     }
     
-    public Post MapPostRequestDtoToPostModel(PostRequestDto dto, int authorId)
+    public Post MapPostRequestDtoToPostModel(CreatePostDto dto, int authorId)
     {
         return new Post()
         {

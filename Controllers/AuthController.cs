@@ -5,6 +5,7 @@ using NextQuest.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using Microsoft.Identity.Client;
+using NextQuest.DTOs.UserDtos;
 using NextQuest.Interfaces;
 
 namespace NextQuest.Controllers
@@ -22,7 +23,7 @@ namespace NextQuest.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(UserDto request)
+        public async Task<IActionResult> Register(CreateUserDto request)
         {
             var response = await _userInterface.CreateUserAsync(request);
 
@@ -35,7 +36,7 @@ namespace NextQuest.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserDto request)
+        public async Task<IActionResult> Login(CreateUserDto request)
         {
             var response = await _userInterface.LoginAsync(request);
             

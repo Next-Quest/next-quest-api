@@ -1,6 +1,6 @@
 using NextQuest.Models;
 
-namespace NextQuest.DTOs;
+namespace NextQuest.DTOs.PostDtos;
 
 public class PostDto
 {
