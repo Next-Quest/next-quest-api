@@ -80,6 +80,28 @@ public class GameController : ControllerBase
             Games = response.Games
         });
     }
+    
+    [Authorize]
+    [HttpGet("listByPreference")]
+    public async Task<IActionResult> ListByPreference([FromQuery] int page, [FromQuery] int pageSize)
+    {   
+        var tokenId = User.FindFirst("id")?.Value;
+        if (!int.TryParse(tokenId, out var userId))
+            return Unauthorized();
+        
+        var response = await _gameInterface.GetPreferredGamesByPageAsync(userId, page, pageSize);
+        
+        if (!response.Success)
+        {
+            return BadRequest(response.Message);
+        }
+            
+        return Ok(new
+        {
+            Message = response.Message,
+            Games = response.Games
+        });
+    }
 
     [HttpGet("get/{id}")]
     public async Task<IActionResult> Get(int id)

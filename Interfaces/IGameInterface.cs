@@ -13,6 +13,8 @@ public interface IGameInterface
     public Task<(bool Success, string Message)> DeleteGameAsync(int gameId);
     public Task<(bool Success, string Message, List<GameDto>? Games)> GetGamesByPageAsync(int page, int pageSize);
 
+    public Task<(bool Success, string Message, List<GameDto>? Games)> GetPreferredGamesByPageAsync(int userId, int page, int pageSize);
+
 
     #region DtoMapping
     public Game MapCreateGameDtoToGameModel(CreateGameDto gameDto);
