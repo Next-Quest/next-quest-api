@@ -66,6 +66,24 @@ namespace NextQuest.Migrations
                     b.ToTable("Games");
                 });
 
+            modelBuilder.Entity("NextQuest.Models.Genre", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("GenreName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Genres");
+                });
+
             modelBuilder.Entity("NextQuest.Models.User", b =>
                 {
                     b.Property<int>("Id")
