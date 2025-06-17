@@ -114,48 +114,37 @@ public class UserService : IUserInterface
             return (false, e.Message);  
         }
     }
-
-    public async Task<(bool Success, string Message)> AddPreferredGenre(int userId, int genreId)
-    {
-        try
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if (user == null)
-                return (false, "Não foi possível localizar esse usuário.");
-            
-            var genre = await _context.Genres.FirstOrDefaultAsync(g => g.Id == genreId);
-            if (genre == null)
-                return (false, "Não foi possível localizar esse gênero.");
-        
-            user.PreferredGenres.Add(genre);
-        
-            await _context.SaveChangesAsync();
-
-            return (true, "Gênero adicionado como preferido com sucesso.");
-        }
-        catch (Exception e)
-        {
-            return (false, e.Message);
-        }
-    }
     
-    public async Task<(bool Success, string Message)> RemovePreferredGenre(int userId, int genreId)
+    public async Task<(bool Success, string Message)> TogglePreferredGenre(int userId, int genreId)
     {
         try
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if (user == null)
-                return (false, "Não foi possível localizar esse usuário.");
-            
-            var genre = await _context.Genres.FirstOrDefaultAsync(g => g.Id == genreId);
-            if (genre == null)
-                return (false, "Não foi possível localizar esse gênero.");
-        
-            user.PreferredGenres.Remove(genre);
-        
-            await _context.SaveChangesAsync();
+            var user = await _context.Users.Include(u => u.PreferredGenres)
+                .FirstOrDefaultAsync(u => u.Id == userId);
 
-            return (true, "Gênero removido como preferido com sucesso.");
+            if (user == null)
+                return (false, "Usuário não encontrado.");
+
+            var existentPreferredGenre = user.PreferredGenres.FirstOrDefault(g => g.Id == genreId);
+
+            if (existentPreferredGenre != null)
+            {
+                user.PreferredGenres.Remove(existentPreferredGenre);
+                await _context.SaveChangesAsync();
+                return (true, "Preferência removida com sucesso.");
+            }
+            else
+            {
+                var addedGenre = await _context.Genres.FindAsync(genreId);
+                if (addedGenre == null)
+                {
+                    return (false, "Gênero não encontrado.");
+                }
+
+                user.PreferredGenres.Add(addedGenre);
+                await _context.SaveChangesAsync();
+                return (true, "Preferência adicionada com sucesso.");
+            }
         }
         catch (Exception e)
         {
