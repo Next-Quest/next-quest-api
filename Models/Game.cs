@@ -18,4 +18,6 @@ public class Game
         
     [Required]
     public DateTime ReleaseDate { get; set; }
+    
+    public int GenreId { get; set; }
 }
