@@ -60,7 +60,24 @@ public class GameController : ControllerBase
         return Ok(new
         {
             Message = response.Message,
-            Companies = response.Games
+            Games = response.Games
+        });
+    }
+    
+    [HttpGet("list")]
+    public async Task<IActionResult> ListByPage([FromQuery] int page, [FromQuery] int pageSize)
+    {
+        var response = await _gameInterface.GetGamesByPageAsync(page, pageSize);
+        
+        if (!response.Success)
+        {
+            return BadRequest(response.Message);
+        }
+            
+        return Ok(new
+        {
+            Message = response.Message,
+            Games = response.Games
         });
     }
 

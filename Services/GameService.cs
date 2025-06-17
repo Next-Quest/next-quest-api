@@ -51,6 +51,37 @@ public class GameService : IGameInterface
             return (false, e.Message, null);
         }
     }
+    
+    public async Task<(bool Success, string Message, List<GameDto>? Games)> GetGamesByPageAsync(int page, int pageSize)
+    {
+        try
+        {
+            if (page <= 0)
+            {
+                return (false, "O número da página deve ser maior que zero.", null);
+            }
+            if (pageSize <= 0)
+            {
+                return (false, "O tamanho da página deve ser maior que zero.", null);
+            }
+
+            
+            var response = await _context.Games.Skip(pageSize * (page - 1)).Take(pageSize).ToListAsync();
+
+            if (response.Count == 0)
+            {
+                return (false, "Nenhum jogo encontrado.", null);
+            }
+
+            var games = MapGameModelToGameDtoList(response);
+            
+            return (true, "Jogos encontrados com sucesso.", games);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, null);
+        }
+    }
 
     public async Task<(bool Success, string Message, GameDto? Game)> GetGameByIdAsync(int gameId)
     {
