@@ -82,6 +82,58 @@ public class GameService : IGameInterface
             return (false, e.Message, null);
         }
     }
+    
+    public async Task<(bool Success, string Message, List<GameDto>? Games)> GetPreferredGamesByPageAsync(int userId, int page, int pageSize)
+    {
+        try
+        {
+            if (userId <= 0)
+            {
+                return (false, "Usuário não encontrado.", null);
+            }
+            if (page <= 0)
+            {
+                return (false, "O número da página deve ser maior que zero.", null);
+            }
+            if (pageSize <= 0)
+            {
+                return (false, "O tamanho da página deve ser maior que zero.", null);
+            }
+            
+            var preferredGenreIds = await _context.Users
+                .Where(u => u.Id == userId)
+                .SelectMany(u => u.PreferredGenres)
+                .Select(g => g.Id)
+                .ToListAsync();
+            
+            if (!preferredGenreIds.Any())
+            {
+                return (true, "Nenhum jogo encontrado de acordo com a preferência.", new List<GameDto>());
+            }
+            
+            var query = _context.Games
+                .Where(game => preferredGenreIds.Contains(game.GenreId));
+            
+            var response = await query
+                .OrderBy(game => game.Id)
+                .Skip(pageSize * (page - 1))
+                .Take(pageSize)
+                .ToListAsync();
+            
+            if (response.Count == 0)
+            {
+                return (true, "Nenhum jogo encontrado para suas preferências nesta página.", new List<GameDto>());
+            }
+
+            var games = MapGameModelToGameDtoList(response);
+            
+            return (true, "Jogos preferidos encontrados com sucesso.", games);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, null);
+        }
+    }
 
     public async Task<(bool Success, string Message, GameDto? Game)> GetGameByIdAsync(int gameId)
     {
