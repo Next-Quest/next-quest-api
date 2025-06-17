@@ -9,4 +9,5 @@ public class Genre
     [Required]
     [MaxLength(50)]
     public string GenreName { get; set; } = "";
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

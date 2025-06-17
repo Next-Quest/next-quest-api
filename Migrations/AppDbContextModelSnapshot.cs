@@ -22,6 +22,21 @@ namespace NextQuest.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("GenreUser", b =>
+                {
+                    b.Property<int>("PreferredGenresId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PreferredGenresId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("GenreUser");
+                });
+
             modelBuilder.Entity("NextQuest.Models.Company", b =>
                 {
                     b.Property<int>("Id")
@@ -116,6 +131,21 @@ namespace NextQuest.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("GenreUser", b =>
+                {
+                    b.HasOne("NextQuest.Models.Genre", null)
+                        .WithMany()
+                        .HasForeignKey("PreferredGenresId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NextQuest.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
