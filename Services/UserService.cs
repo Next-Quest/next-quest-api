@@ -114,4 +114,41 @@ public class UserService : IUserInterface
             return (false, e.Message);  
         }
     }
+    
+    public async Task<(bool Success, string Message)> TogglePreferredGenre(int userId, int genreId)
+    {
+        try
+        {
+            var user = await _context.Users.Include(u => u.PreferredGenres)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+                return (false, "Usuário não encontrado.");
+
+            var existentPreferredGenre = user.PreferredGenres.FirstOrDefault(g => g.Id == genreId);
+
+            if (existentPreferredGenre != null)
+            {
+                user.PreferredGenres.Remove(existentPreferredGenre);
+                await _context.SaveChangesAsync();
+                return (true, "Preferência removida com sucesso.");
+            }
+            else
+            {
+                var addedGenre = await _context.Genres.FindAsync(genreId);
+                if (addedGenre == null)
+                {
+                    return (false, "Gênero não encontrado.");
+                }
+
+                user.PreferredGenres.Add(addedGenre);
+                await _context.SaveChangesAsync();
+                return (true, "Preferência adicionada com sucesso.");
+            }
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
+    }
 }

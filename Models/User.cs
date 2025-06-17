@@ -20,5 +20,6 @@ namespace NextQuest.Models
         public string PasswordHash { get; set; } = string.Empty;
         
         public bool IsAdmin { get; set; } = false;
+        public virtual ICollection<Genre> PreferredGenres { get; set; } = new List<Genre>(); 
     }
 }

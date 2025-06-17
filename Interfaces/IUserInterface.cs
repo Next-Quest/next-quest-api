@@ -9,4 +9,6 @@ public interface IUserInterface
     public Task<(bool Success, string Message, string? Token)> LoginAsync(CreateUserDto request);
     public Task<(bool Success, string Message)> IsAdminAsync(int userId);
 
+    public Task<(bool Success, string Message)> TogglePreferredGenre(int userId, int genreId);
+
 }
