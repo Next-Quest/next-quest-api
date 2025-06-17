@@ -114,4 +114,52 @@ public class UserService : IUserInterface
             return (false, e.Message);  
         }
     }
+
+    public async Task<(bool Success, string Message)> AddPreferredGenre(int userId, int genreId)
+    {
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+                return (false, "Não foi possível localizar esse usuário.");
+            
+            var genre = await _context.Genres.FirstOrDefaultAsync(g => g.Id == genreId);
+            if (genre == null)
+                return (false, "Não foi possível localizar esse gênero.");
+        
+            user.PreferredGenres.Add(genre);
+        
+            await _context.SaveChangesAsync();
+
+            return (true, "Gênero adicionado como preferido com sucesso.");
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
+    }
+    
+    public async Task<(bool Success, string Message)> RemovePreferredGenre(int userId, int genreId)
+    {
+        try
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+                return (false, "Não foi possível localizar esse usuário.");
+            
+            var genre = await _context.Genres.FirstOrDefaultAsync(g => g.Id == genreId);
+            if (genre == null)
+                return (false, "Não foi possível localizar esse gênero.");
+        
+            user.PreferredGenres.Remove(genre);
+        
+            await _context.SaveChangesAsync();
+
+            return (true, "Gênero removido como preferido com sucesso.");
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
+    }
 }
