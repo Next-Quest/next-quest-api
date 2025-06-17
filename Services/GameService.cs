@@ -182,7 +182,8 @@ public class GameService : IGameInterface
             Title = game.Title,
             PublisherId = game.PublisherId,
             DeveloperId = game.DeveloperId,
-            ReleaseDate = game.ReleaseDate
+            ReleaseDate = game.ReleaseDate,
+            GenreId = game.GenreId,
         };
     }
 
@@ -205,7 +206,8 @@ public class GameService : IGameInterface
             Title = gameDto.Title,
             PublisherId = gameDto.PublisherId,
             DeveloperId = gameDto.DeveloperId,
-            ReleaseDate = gameDto.ReleaseDate
+            ReleaseDate = gameDto.ReleaseDate,
+            GenreId = gameDto.GenreId,
         };
     }
     
