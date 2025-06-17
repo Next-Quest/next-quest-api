@@ -11,5 +11,6 @@ namespace NextQuest.Data
 		public DbSet<User> Users => Set<User>();
 		public DbSet<Game> Games => Set<Game>();
 		public DbSet<Company> Companies => Set<Company>();
+		public DbSet<Genre> Genres => Set<Genre>();
 	}
 }
