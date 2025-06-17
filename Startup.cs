@@ -43,6 +43,7 @@ public class Startup
         services.AddScoped<IAuthInterface, AuthService>();
         services.AddScoped<ICompanyInterface, CompanyService>();
         services.AddScoped<IGameInterface, GameService>();
+        services.AddScoped<IGenreInterface, GenreService>();
         services.AddScoped<IPostInterface, PostService>();
         services.AddScoped<IUserInterface, UserService>();
 
