@@ -7,4 +7,6 @@ public class UpdateGameDto
     public int? PublisherId { get; set; }
     public int? DeveloperId { get; set; }
     public DateTime? ReleaseDate { get; set; }
+    public int GenreId { get; set; }
+
 }

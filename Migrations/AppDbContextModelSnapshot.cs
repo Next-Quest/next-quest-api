@@ -50,6 +50,9 @@ namespace NextQuest.Migrations
                     b.Property<int>("DeveloperId")
                         .HasColumnType("int");
 
+                    b.Property<int>("GenreId")
+                        .HasColumnType("int");
+
                     b.Property<int>("PublisherId")
                         .HasColumnType("int");
 
